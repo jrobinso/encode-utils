@@ -23,8 +23,8 @@ URL = "https://www.encodeproject.org/search/?" \
       "field=files.file_format&" \
       "field=files.output_type&" \
       "field=files.href&" \
-      "field=files.replicate.technical_replicate_number&" \
-      "field=files.replicate.biological_replicate_number&" \
+      "field=files.technical_replicates&" \
+      "field=files.biological_replicates&" \
       "field=files.assembly&" \
       "field=files.accession&" \
       "limit=all"
@@ -41,6 +41,14 @@ graph = response_json_dict['@graph']
 # Dicitionary for results
 
 results = {}
+
+def listToString(l):
+    result = ''
+    for i in range(len(l)):
+        if i > 0:
+            result += ","
+        result += str(l[i])
+    return result
 
 for record in graph:
 
@@ -71,15 +79,13 @@ for record in graph:
                     if assay_type.lower() != 'hic':
                         continue;
 
-
                 bio_rep = ''
                 tech_rep = ''
-                if 'replicate' in file:
-                    rep = file['replicate']
-                    if 'bioligcal_replicate_number' in rep:
-                        bio_rep = rep['bioligcal_replicate_number']
-                    if 'technical_replicate_number' in rep:
-                        tech_rep = rep['technical_replicate_number']
+                if 'biological_replicates' in file:
+                    bio_rep=listToString(file['biological_replicates'])
+
+                if 'technical_replicates' in file:
+                    tech_rep = listToString(file['technical_replicates'])
 
                 if assembly in results:
                     r = results[assembly]
