@@ -12,22 +12,6 @@ FORMATS = set(["bigBed", "bigWig", "bedpe", "tsv"])
 # Force return from the server in JSON format
 HEADERS = {'accept': 'application/json'}
 
-# "type=Experiment&" \
-# "format=json&" \
-# "field=biosample_summary&" \
-# "field=lab.title&" \
-# "field=biosample_term_name&" \
-# "field=assay_term_name&" \
-# "field=target.title&" \
-# "field=files.file_format&" \
-# "field=files.output_type&" \
-# "field=files.href&" \
-# "field=files.technical_replicates&" \
-# "field=files.biological_replicates&" \
-# "field=files.assembly&" \
-# "field=files.accession&" \
-# "limit=10"
-
 URL = "https://www.encodeproject.org/search/?" \
       "type=Experiment&" \
       "format=json&" \
