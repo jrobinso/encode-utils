@@ -2,22 +2,38 @@
 # -*- coding: latin-1 -*-
 '''GET an object from an ENCODE server'''
 
-import requests, json
+import requests
 
 # Supported file formats
 
-FORMATS = set(["bigBed", "bigWig", "bedpe", "tsv", "hic"])
+FORMATS = set(["bigBed", "bigWig", "bedpe", "tsv"])
+#FORMATS = set(["bigBed", "bigWig", "bedpe", "tsv", "hic"])
 
 # Force return from the server in JSON format
 HEADERS = {'accept': 'application/json'}
 
-# This URL locates the ENCODE biosample with accession number ENCBS000AAA
+# "type=Experiment&" \
+# "format=json&" \
+# "field=biosample_summary&" \
+# "field=lab.title&" \
+# "field=biosample_term_name&" \
+# "field=assay_term_name&" \
+# "field=target.title&" \
+# "field=files.file_format&" \
+# "field=files.output_type&" \
+# "field=files.href&" \
+# "field=files.technical_replicates&" \
+# "field=files.biological_replicates&" \
+# "field=files.assembly&" \
+# "field=files.accession&" \
+# "limit=10"
+
 URL = "https://www.encodeproject.org/search/?" \
-      "type=experiment&" \
+      "type=Experiment&" \
       "format=json&" \
       "field=biosample_summary&" \
       "field=lab.title&" \
-      "field=biosample_term_name&" \
+      "field=biosample_ontology.name&" \
       "field=assay_term_name&" \
       "field=target.title&" \
       "field=files.file_format&" \
@@ -42,6 +58,7 @@ graph = response_json_dict['@graph']
 
 results = {}
 
+
 def listToString(l):
     result = ''
     for i in range(len(l)):
@@ -49,6 +66,7 @@ def listToString(l):
             result += ","
         result += str(l[i])
     return result
+
 
 for record in graph:
 
@@ -82,7 +100,7 @@ for record in graph:
                 bio_rep = ''
                 tech_rep = ''
                 if 'biological_replicates' in file:
-                    bio_rep=listToString(file['biological_replicates'])
+                    bio_rep = listToString(file['biological_replicates'])
 
                 if 'technical_replicates' in file:
                     tech_rep = listToString(file['technical_replicates'])
@@ -96,8 +114,7 @@ for record in graph:
                 if format in FORMATS:
                     r.append(id + '\t' + assembly + '\t' + biosample + '\t' + assay_type + '\t' + target + '\t' +
                              str(bio_rep) + '\t' + str(tech_rep) + '\t' + output_type + '\t' + format + '\t' +
-                             lab + '\t' + file['href'] +  '\t' + accession + '\t' + experiment)
-
+                             lab + '\t' + file['href'] + '\t' + accession + '\t' + experiment)
 
 for a in list(results):
 
@@ -105,10 +122,11 @@ for a in list(results):
 
     with open(fname, 'w') as f:
 
-        print('ID\tAssembly\tBiosample\tAssayType\tTarget\tBioRep\tTechRep\tOutputType\tFormat\tLab\tHREF\tAccession\tExperiment', file=f)
+        print(
+            'ID\tAssembly\tBiosample\tAssayType\tTarget\tBioRep\tTechRep\tOutputType\tFormat\tLab\tHREF\tAccession\tExperiment',
+            file=f)
 
         r = results[a]
 
         for x in r:
             print(x, file=f)
-
